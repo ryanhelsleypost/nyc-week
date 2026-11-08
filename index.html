@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141414">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NYC Week">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>NYC Week</title>
+<style>
+:root{
+  --bg:#f3f3f1;--card:#fff;--ink:#141414;--muted:#62646a;--line:#dedfdb;--band:#141414;--band-ink:#fff;
+  --work:#808183;--show:#ee352e;--travel:#0039a6;--open:#00933c;--sight:#fccc0a;--done:#9a9ca0;
+  --body:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0f1011;--card:#1a1b1d;--ink:#f1f1ef;--muted:#a3a5aa;--line:#2d2f32;--band:#000;
+  --work:#9a9b9e;--show:#ff5a52;--travel:#5b8cf0;--open:#33bb6a;--done:#6b6d72;color-scheme:dark}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.4}
+header{background:var(--band);color:var(--band-ink);padding:calc(env(safe-area-inset-top) + 12px) 16px 10px;position:sticky;top:0;z-index:10}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em}
+.sub{font-size:13px;color:#bdbdbd}
+.chips{display:flex;gap:6px;overflow-x:auto;margin-top:10px;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1px solid #3a3a3a;background:#222;color:#fff;border-radius:10px;padding:6px 10px;min-width:54px;text-align:center;font:700 13px var(--body);cursor:pointer}
+.chip small{display:block;font-weight:500;font-size:11px;color:#bbb}
+.chip.on{background:#fff;color:#141414;border-color:#fff}
+.chip.on small{color:#555}
+.chip .bar{height:3px;border-radius:2px;background:#444;margin-top:4px;overflow:hidden}
+.chip .bar i{display:block;height:100%;background:var(--open)}
+main{padding:12px 16px calc(env(safe-area-inset-bottom) + 90px);max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.dayhead{padding:12px 14px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.dayhead h2{margin:0;font-size:20px}
+.dayhead .where{color:var(--muted);font-size:13px;text-align:right}
+.prog{height:6px;background:var(--line);margin:0 14px 12px;border-radius:3px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--open);transition:width .3s}
+.nownext{padding:12px 14px;display:grid;gap:8px;border-left:5px solid var(--travel)}
+.nownext .lab{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.nownext .big{font-size:17px;font-weight:700}
+.nownext .t{color:var(--muted);font-weight:600;font-size:14px;margin-right:6px}
+ul.items{list-style:none;margin:0;padding:0}
+ul.items li{display:grid;grid-template-columns:44px 1fr;gap:0 4px;padding:10px 12px 10px 8px;border-top:1px solid var(--line);align-items:start}
+ul.items li.next{background:color-mix(in srgb,var(--travel) 9%,transparent)}
+.cb{width:36px;height:36px;border-radius:50%;border:0;background:none;display:grid;place-items:center;cursor:pointer;padding:0}
+.cb span{width:26px;height:26px;border-radius:50%;border:3px solid var(--k,var(--muted));display:grid;place-items:center;transition:background .15s}
+li.done .cb span{background:var(--k,var(--open));border-color:var(--k,var(--open))}
+li.done .cb span::after{content:"";width:7px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+li[data-k="sight"]{--k:#d9a900} li[data-k="work"]{--k:var(--work)} li[data-k="show"]{--k:var(--show)}
+li[data-k="travel"],li[data-k="walk"]{--k:var(--travel)} li[data-k="open"]{--k:var(--open)}
+.body{min-width:0;padding-top:4px}
+.row1{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.time{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;color:var(--muted);min-width:64px}
+.kind{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--k)}
+.what{font-weight:650;font-size:16px;margin-top:2px}
+.note{font-size:14px;color:var(--muted);margin-top:2px}
+.flag{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;color:var(--show);border:1px solid var(--show);border-radius:999px;padding:1px 8px}
+.maps{display:inline-block;margin-top:6px;margin-right:6px;font-size:13px;font-weight:600;color:var(--travel);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+li.done .what,li.done .note{color:var(--done)} li.done .what{text-decoration:line-through}
+li.past:not(.done) .time{color:var(--show)}
+.sec{padding:10px 14px 4px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.foot{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;padding:4px 2px}
+.btn{font:600 14px var(--body);border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;cursor:pointer}
+.btn.red{color:var(--show)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:8px 10px calc(env(safe-area-inset-bottom) + 8px);gap:8px;z-index:10}
+.tabbar button{flex:1;font:700 14px var(--body);padding:10px;border-radius:10px;border:0;background:var(--bg);color:var(--ink);cursor:pointer}
+.tabbar button.on{background:var(--band);color:#fff}
+.hide{display:none!important}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:center;z-index:50;padding:20px}
+.modal .card{padding:18px;max-width:340px;display:grid;gap:12px}
+.toggle{white-space:nowrap;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+:focus-visible{outline:3px solid var(--travel);outline-offset:2px}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><div><h1>NYC Week</h1><div class="sub">Nov 8–13 · Courtyard Marriott, 3 E 40th St</div></div>
+  <label class="toggle"><input type="checkbox" id="hideDone"> Hide done</label></div>
+  <div class="chips" id="chips"></div>
+</header>
+<main id="main"></main>
+<nav class="tabbar">
+  <button id="tab-day" class="on">Schedule</button>
+  <button id="tab-todo">To book</button>
+  <button id="tab-info">Trip info</button>
+</nav>
+<div id="modal" class="modal hide"><div class="card"><div id="mtext"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" id="mno">Cancel</button><button class="btn red" id="myes">Reset</button></div></div></div>
+<script>
+const NYC_BUILD="2026-11-07-V1";
+const DATA={"days": [{"id": "sun", "date": "2026-11-08", "dow": "Sun", "label": "Nov 8", "where": "Travel day", "items": [{"t": "8:45 AM PT", "k": "travel", "w": "Leave home in Ontario for LAX", "n": "About 60 miles, 70–90 min · includes a 15-min buffer", "f": ""}, {"t": "10:30 AM PT", "k": "travel", "w": "At LAX", "n": "Two hours before departure", "f": ""}, {"t": "12:36 PM PT", "k": "travel", "w": "AA 274 departs LAX", "n": "", "f": ""}, {"t": "9:00 PM", "k": "travel", "w": "Land at JFK", "n": "Terminal 8 · add 20–30 min if you checked a bag · follow signs to the official taxi stand", "f": ""}, {"t": "9:30 PM", "k": "travel", "w": "Taxi to the hotel", "n": "$70 flat, about $95 with tip · 40–50 min · includes a 15-min buffer", "f": ""}, {"t": "10:45 PM", "k": "travel", "w": "Check in", "n": "Courtyard Marriott, 3 E 40th St", "f": ""}, {"t": "11:15 PM", "k": "walk", "w": "Optional: walk to Times Square", "n": "Free · about 8 min west on 42nd St, past Bryant Park · only if you have energy", "f": ""}, {"t": "11:40 PM", "k": "do", "w": "Late-night slice at Joe's Pizza", "n": "1435 Broadway at 40th St · a short walk south from Times Square · open late", "f": ""}, {"t": "12:10 AM", "k": "walk", "w": "Walk back to the hotel", "n": "About 6 min east on 40th St", "f": ""}]}, {"id": "mon", "date": "2026-11-09", "dow": "Mon", "label": "Nov 9", "where": "Netflix · 888 Broadway", "items": [{"t": "6:40 AM", "k": "do", "w": "Starbucks", "n": "485 5th Ave · mobile order ahead", "f": ""}, {"t": "6:55 AM", "k": "travel", "w": "Uber to Ess-a-Bagel", "n": "770 3rd Ave at 48th St, its new flagship · 10 min · includes a 15-min buffer", "f": ""}, {"t": "7:20 AM", "k": "do", "w": "Bagel at Ess-a-Bagel", "n": "Classic NYC bagel shop", "f": ""}, {"t": "7:55 AM", "k": "travel", "w": "Uber to 888 Broadway", "n": "About 20 min · includes a 15-min buffer", "f": ""}, {"t": "8:30 AM", "k": "work", "w": "Work until 5:30 PM", "n": "", "f": ""}, {"t": "5:30 PM", "k": "travel", "w": "Back to the hotel", "n": "15–20 min · includes a 15-min buffer", "f": ""}, {"t": "6:05 PM", "k": "open", "w": "Change and drop your bag", "n": "", "f": ""}, {"t": "6:35 PM", "k": "walk", "w": "Walk to the Empire State Building", "n": "6 blocks down 5th Ave, about 8 min · includes a 15-min buffer", "f": ""}, {"t": "7:00 PM", "k": "do", "w": "Empire State Building at night", "n": "Book a 7:00 timed ticket · 86th floor ≈ $44–60, add the 102nd ≈ $79–96", "f": ""}, {"t": "8:15 PM", "k": "travel", "w": "Uber to the West Village", "n": "About 15 min · includes a 15-min buffer", "f": ""}, {"t": "8:45 PM", "k": "do", "w": "The Friends apartment building", "n": "Free · 90 Bedford St at Grove St · outside photo only, people live here · The Little Owl restaurant is on the ground floor", "f": ""}, {"t": "8:55 PM", "k": "travel", "w": "Uber to Katz's Delicatessen", "n": "205 E Houston St · about 15 min · includes a 15-min buffer", "f": ""}, {"t": "9:25 PM", "k": "do", "w": "Dinner at Katz's", "n": "Closes around 10:45–11 PM on Mondays · pastrami on rye · keep your ticket, you pay on the way out", "f": ""}, {"t": "10:20 PM", "k": "travel", "w": "Uber back to the hotel", "n": "About 20 min · includes a 15-min buffer", "f": ""}]}, {"id": "tue", "date": "2026-11-10", "dow": "Tue", "label": "Nov 10", "where": "Netflix Brooklyn · Bushwick", "items": [{"t": "6:40 AM", "k": "do", "w": "Breakfast + Starbucks", "n": "Starbucks at 485 5th Ave, one block north · mobile order ahead", "f": ""}, {"t": "7:20 AM", "k": "travel", "w": "Uber to 333 Johnson Ave, Bushwick", "n": "35–50 min at rush hour · includes a 15-min buffer · or the L train to Morgan Ave", "f": ""}, {"t": "8:30 AM", "k": "work", "w": "Work, possibly until 9:00 PM", "n": "", "f": ""}, {"t": "9:00 PM", "k": "travel", "w": "Uber to Fraunces Tavern", "n": "54 Pearl St, Financial District · 25–35 min · includes a 15-min buffer", "f": ""}, {"t": "9:45 PM", "k": "do", "w": "Late dinner at Fraunces Tavern", "n": "Historic tavern where George Washington said farewell to his officers in 1783 · book a 9:45 table in the Tallmadge Room on OpenTable or at 212-968-1776 · the kitchen closes around 11 · if work runs late, the Independence Bar takes walk-ins", "f": ""}, {"t": "10:45 PM", "k": "walk", "w": "Charging Bull at night", "n": "Free · Bowling Green, about a 3-min walk · no crowds this late", "f": ""}, {"t": "11:00 PM", "k": "travel", "w": "Uber back to the hotel", "n": "About 20 min · includes a 15-min buffer", "f": ""}]}, {"id": "wed", "date": "2026-11-11", "dow": "Wed", "label": "Nov 11", "where": "Netflix · 888 Broadway", "items": [{"t": "7:00 AM", "k": "do", "w": "Breakfast + Starbucks", "n": "Starbucks at 485 5th Ave, one block north · mobile order ahead", "f": ""}, {"t": "7:50 AM", "k": "travel", "w": "Uber to 888 Broadway", "n": "15–25 min · includes a 15-min buffer", "f": ""}, {"t": "8:30 AM", "k": "work", "w": "Work until 4:30 PM", "n": "", "f": ""}, {"t": "4:30 PM", "k": "travel", "w": "Back to the hotel", "n": "15–20 min · includes a 15-min buffer", "f": ""}, {"t": "5:05 PM", "k": "open", "w": "Relax and change for the show", "n": "Dinner is late tonight, so grab a snack · a pretzel or hot dog from a street cart on the way works", "f": ""}, {"t": "6:15 PM", "k": "travel", "w": "Uber to the Richard Rodgers Theatre", "n": "226 W 46th St · about 10 min · includes a 15-min buffer", "f": ""}, {"t": "7:00 PM", "k": "show", "w": "Hamilton", "n": "About 2 hr 45 min with intermission", "f": ""}, {"t": "~9:45 PM", "k": "do", "w": "Hamilton stage door", "n": "Free · on W 46th St beside the theater · head there right at curtain to get a spot on the barricade · cast usually come out 15–30 min after the show, though not every actor stops", "f": ""}, {"t": "10:15 PM", "k": "travel", "w": "Uber back to the hotel", "n": "About 10 min · includes a 15-min buffer · order your Chinese food from the car", "f": ""}, {"t": "10:45 PM", "k": "do", "w": "Late-night Chinese delivery at the hotel", "n": "The Best Sichuan, 47 W 39th St, is open until 1 AM and 2 blocks away · try the pork wontons in chili oil, dan dan noodles and garlic shrimp · milder pick: Blue Blossom, 108 W 39th St, for soup dumplings and sesame beef, but it closes at 10:30, so order by 10:15", "f": ""}]}, {"id": "thu", "date": "2026-11-12", "dow": "Thu", "label": "Nov 12", "where": "Netflix · 888 Broadway", "items": [{"t": "7:00 AM", "k": "do", "w": "Breakfast + Starbucks", "n": "Starbucks at 485 5th Ave, one block north · mobile order ahead", "f": ""}, {"t": "7:50 AM", "k": "travel", "w": "Uber to 888 Broadway", "n": "15–25 min · includes a 15-min buffer", "f": ""}, {"t": "8:30 AM", "k": "work", "w": "Work until 1:30 PM", "n": "Leaving at 1:30 keeps your hotel stop · skip the hotel and you can work until 2:15", "f": ""}, {"t": "1:30 PM", "k": "travel", "w": "Back to the hotel", "n": "15–20 min · includes a 15-min buffer", "f": ""}, {"t": "2:05 PM", "k": "open", "w": "Change and drop your bag", "n": "", "f": ""}, {"t": "2:30 PM", "k": "walk", "w": "Walk to Radio City Music Hall", "n": "1260 6th Ave at 50th · about 13 min up 6th Ave · includes a 15-min buffer", "f": ""}, {"t": "3:00 PM", "k": "show", "w": "Rockettes Christmas Spectacular", "n": "About 90 min", "f": ""}, {"t": "4:30 PM", "k": "do", "w": "Rockefeller Center", "n": "Free · across the street · the tree isn't lit until Dec 2, so expect it mid-decorating · watch the skaters from the plaza", "f": "Tree not lit yet"}, {"t": "4:50 PM", "k": "walk", "w": "Walk down 5th Ave to the library", "n": "About 10 min · you pass St. Patrick's Cathedral and Saks on the way · includes a 15-min buffer", "f": ""}, {"t": "5:15 PM", "k": "do", "w": "The Ghostbusters library", "n": "Free · closes at 6 PM on Thursdays · Astor Hall and the main hall · Bryant Park is right behind it", "f": ""}, {"t": "6:00 PM", "k": "travel", "w": "Uber to West 72nd St", "n": "About 15 min · includes a 15-min buffer", "f": ""}, {"t": "6:30 PM", "k": "do", "w": "Strawberry Fields, Central Park", "n": "Free · the Imagine mosaic, just inside the park at Central Park West, across from the Dakota · lit and busy in the evening · stick to this edge of the park after dark", "f": ""}, {"t": "7:00 PM", "k": "do", "w": "Gray's Papaya", "n": "Broadway & 72nd · a 3-min walk from Strawberry Fields · keep it to one frank and a papaya drink, dinner is next", "f": ""}, {"t": "7:20 PM", "k": "travel", "w": "Uber to Ellen's Stardust Diner", "n": "1650 Broadway at 51st · about 10 min · includes a 15-min buffer", "f": ""}, {"t": "7:45 PM", "k": "do", "w": "Dinner at Ellen's Stardust Diner", "n": "The singing-waiter diner, staff are Broadway hopefuls belting show tunes all night · no reservations, so expect a line · bring cash for the singers' tip bucket", "f": ""}, {"t": "10:00 PM", "k": "walk", "w": "Walk to the Lyric Theatre", "n": "214 W 43rd St · about 10 min from Ellen's · includes a 15-min buffer", "f": ""}, {"t": "~10:30 PM", "k": "do", "w": "Harry Potter and the Cursed Child stage door", "n": "Free · Tom Felton (Draco) is in the cast through Jan 3, so expect a big crowd · get to the barricade before the show lets out", "f": ""}, {"t": "~11:15 PM", "k": "walk", "w": "Walk back to the hotel", "n": "About 10 min · includes a 15-min buffer", "f": ""}, {"t": "11:30 PM", "k": "do", "w": "Insomnia Cookies delivered to the hotel", "n": "Warm cookies after the stage door · they deliver until 3 AM on Thursdays", "f": ""}]}, {"id": "fri", "date": "2026-11-13", "dow": "Fri", "label": "Nov 13", "where": "Free day · fly home", "items": [{"t": "8:00 AM", "k": "do", "w": "Breakfast + Starbucks, then check out", "n": "Starbucks at 485 5th Ave, one block north · mobile order ahead · leave bags at the front desk", "f": ""}, {"t": "9:05 AM", "k": "walk", "w": "Walk to the Museum of Broadway", "n": "145 W 45th St · about 10 min · includes a 15-min buffer", "f": ""}, {"t": "9:30 AM", "k": "do", "w": "Museum of Broadway", "n": "Opens 9:30 · plan about an hour · ≈ $41–48", "f": ""}, {"t": "10:30 AM", "k": "travel", "w": "Uber to the World Trade Center", "n": "20–30 min · includes a 15-min buffer", "f": ""}, {"t": "11:15 AM", "k": "do", "w": "9/11 Memorial & Museum", "n": "Book an 11:15 timed ticket · plan 1.5 hours · ≈ $33–36", "f": ""}, {"t": "12:45 PM", "k": "do", "w": "Memorial pools and the Oculus", "n": "Free", "f": ""}, {"t": "1:00 PM", "k": "walk", "w": "Walk to the Ghostbusters firehouse", "n": "Free · Hook & Ladder 8, 14 N Moore St · about 10 min north of the pools · photo from outside", "f": ""}, {"t": "1:15 PM", "k": "travel", "w": "Uber back to the hotel for bags", "n": "About 25 min · includes a 15-min buffer · gives you 15 min to grab bags and use the restroom", "f": ""}, {"t": "2:10 PM", "k": "travel", "w": "Uber or black car to JFK", "n": "Terminal 8 · Friday traffic, 60–90 min · includes a 15-min buffer", "f": ""}, {"t": "~3:40 PM", "k": "travel", "w": "At JFK", "n": "About 2 hours before departure", "f": ""}, {"t": "5:39 PM", "k": "travel", "w": "AA 302 departs JFK", "n": "Lands at LAX 9:04 PM PT", "f": ""}]}], "todo": [{"g": "Book ahead", "key": "esb", "w": "Empire State Building tickets", "n": "Mon 11/9 · 7:00 PM timed entry · ≈ $44–60, or ≈ $79–96 with the 102nd floor · esbnyc.com", "done": false}, {"g": "Book ahead", "key": "fraunces", "w": "Fraunces Tavern table", "n": "Tue 11/10 · 9:45 PM · Tallmadge Room · OpenTable or 212-968-1776", "done": false}, {"g": "Book ahead", "key": "mob", "w": "Museum of Broadway tickets", "n": "Fri 11/13 · 9:30 AM · ≈ $41–48", "done": false}, {"g": "Book ahead", "key": "911", "w": "9/11 Museum tickets", "n": "Fri 11/13 · 11:15 AM timed entry · ≈ $33–36 · 911memorial.org", "done": false}, {"g": "Book ahead", "key": "car", "w": "Car to JFK", "n": "Fri 11/13 · 2:10 PM pickup at the hotel · Terminal 8 · book a black car ahead, or just call an Uber", "done": false}, {"g": "Day of", "key": "chinese", "w": "Order Chinese delivery", "n": "Wed 11/11 · from your Uber after the stage door, around 10:15 PM · The Best Sichuan (open until 1 AM)", "done": false}, {"g": "Day of", "key": "cash", "w": "Bring small cash", "n": "For the singers' tip bucket at Ellen's on Thursday and for taxi tips", "done": false}, {"g": "Day of", "key": "starbucks", "w": "Set up Starbucks mobile ordering", "n": "Store at 485 5th Ave, one block from the hotel", "done": false}, {"g": "Already done", "key": "flights", "w": "Flights · AA 274 and AA 302", "n": "Conf. WBJDHW", "done": true}, {"g": "Already done", "key": "hotel", "w": "Hotel · Courtyard Marriott, 3 E 40th St", "n": "5 nights", "done": true}, {"g": "Already done", "key": "ham", "w": "Hamilton tickets", "n": "Wed 11/11 · 7:00 PM", "done": true}, {"g": "Already done", "key": "rock", "w": "Rockettes tickets", "n": "Thu 11/12 · 3:00 PM", "done": true}]};
+const KIND={travel:"Travel",walk:"Walk",work:"Work",show:"Show","do":"See & eat",open:"Free time"};
+let S={done:{},todo:{},hideDone:false};
+try{S=Object.assign(S,JSON.parse(localStorage.getItem("nycweek")||"{}"));}catch(e){}
+DATA.todo.forEach(t=>{if(!(t.key in S.todo))S.todo[t.key]=t.done;});
+function save(){try{localStorage.setItem("nycweek",JSON.stringify(S));}catch(e){}}
+function esc(x){return String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function nowET(){const p=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());const g=k=>p.find(x=>x.type===k).value;return{date:g("year")+"-"+g("month")+"-"+g("day"),min:(+g("hour")%24)*60+ +g("minute")};}
+function tmin(t){const m=t.replace("~","").match(/(\d+):(\d+)\s*(AM|PM)/i);if(!m)return null;let h=+m[1]%12;if(/pm/i.test(m[3]))h+=12;let v=h*60+ +m[2];if(/PT/.test(t))v+=180;return v;}
+function key(d,i){return d.id+":"+i+":"+d.items[i].w.slice(0,24);}
+const N=nowET();
+let view="day",cur=(DATA.days.find(d=>d.date===N.date)||(N.date>"2026-11-13"?DATA.days[5]:DATA.days[0])).id;
+if(N.date<"2026-11-08")view="todo";
+function dayStats(d){let n=d.items.length,c=0;d.items.forEach((_,i)=>{if(S.done[key(d,i)])c++;});return{n,c};}
+function chips(){const el=document.getElementById("chips");el.innerHTML=DATA.days.map(d=>{const s=dayStats(d);return `<button class="chip ${view==="day"&&cur===d.id?"on":""}" data-d="${d.id}">${d.dow}<small>${d.label.split(" ")[1]}</small><div class="bar"><i style="width:${s.n?Math.round(100*s.c/s.n):0}%"></i></div></button>`;}).join("");
+  el.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{cur=b.dataset.d;view="day";render();window.scrollTo(0,0);});}
+function mapsFor(it){const txt=it.w+" · "+it.n;const m=txt.match(/\b(\d{1,4}\s(?:[EW]\.?\s)?(?:[\w.]+\s){0,2}(?:St|Ave|Avenue|Street|Broadway|Plaza))\b/);if(m)return m[1]+", New York, NY";if(it.k==="do"||it.k==="show")return it.w.replace(/^(Dinner at|Late dinner at|Late-night slice at|Bagel at|Pizza at|Warm cookies at|Light bite at|Optional: walk to|Walk to)\s+/i,"").replace(/\s+(at night|stage door|delivered to the hotel|delivery at the hotel).*$/i,"")+", New York, NY";return null;}
+function itemHTML(d,i,isNext,isPast){const it=d.items[i],k=key(d,i),done=!!S.done[k];if(S.hideDone&&done)return"";const addr=mapsFor(it);
+  return `<li data-k="${it.k==="do"?"sight":it.k}" class="${done?"done":""} ${isNext?"next":""} ${isPast?"past":""}"><button class="cb" data-key="${esc(k)}" aria-label="Mark ${esc(it.w)} done" aria-pressed="${done}"><span></span></button><div class="body"><div class="row1"><span class="time">${esc(it.t)}</span><span class="kind">${KIND[it.k]||""}</span></div><div class="what">${esc(it.w)}</div>${it.n?`<div class="note">${esc(it.n)}</div>`:""}${it.f?`<span class="flag">${esc(it.f)}</span> `:""}${addr?`<a class="maps" href="https://maps.google.com/?q=${encodeURIComponent(addr)}" target="_blank" rel="noopener">📍 Map</a>`:""}</div></li>`;}
+function renderDay(){const d=DATA.days.find(x=>x.id===cur),s=dayStats(d),isToday=d.date===N.date;
+  let nextI=-1;for(let i=0;i<d.items.length;i++){if(!S.done[key(d,i)]){nextI=i;break;}}
+  let nn="";if(nextI>=0){const a=d.items[nextI],b=d.items.slice(nextI+1).find((x,j)=>!S.done[key(d,nextI+1+j)]);
+    nn=`<div class="card nownext"><div><div class="lab">${isToday?"Up now":"First up"}</div><div class="big"><span class="t">${esc(a.t)}</span>${esc(a.w)}</div></div>${b?`<div><div class="lab">Then</div><div><span class="t">${esc(b.t)}</span>${esc(b.w)}</div></div>`:""}</div>`;}
+  else nn=`<div class="card nownext" style="border-left-color:var(--open)"><div class="big">All done for ${d.dow}. Nice.</div></div>`;
+  const rows=d.items.map((_,i)=>{let tm=tmin(d.items[i].t);if(tm!==null&&tm<300&&i>0)tm+=1440;const past=isToday&&tm!==null&&tm<N.min-30;return itemHTML(d,i,i===nextI,past);}).join("");
+  return `<div class="card"><div class="dayhead"><h2>${d.dow}, ${d.label}</h2><div class="where">${esc(d.where)}<br>${s.c} of ${s.n} done</div></div><div class="prog"><i style="width:${s.n?Math.round(100*s.c/s.n):0}%"></i></div></div>${nn}<div class="card"><ul class="items">${rows||'<li style="display:block;color:var(--muted)">Everything here is checked off.</li>'}</ul></div><div class="foot"><span>Times are Eastern unless marked PT</span><button class="btn red" id="resetDay">Reset day</button></div>`;}
+function renderTodo(){const groups=[...new Set(DATA.todo.map(t=>t.g))];
+  return groups.map(g=>`<div class="card"><div class="sec">${esc(g)}</div><ul class="items">${DATA.todo.filter(t=>t.g===g).map(t=>{const done=!!S.todo[t.key];return `<li data-k="${g==="Already done"?"open":"travel"}" class="${done?"done":""}"><button class="cb" data-todo="${t.key}" aria-pressed="${done}" aria-label="Mark ${esc(t.w)} done"><span></span></button><div class="body"><div class="what">${esc(t.w)}</div><div class="note">${esc(t.n)}</div></div></li>`;}).join("")}</ul></div>`).join("")+
+  `<div class="card"><div class="sec">No reservations needed</div><div class="note" style="padding:0 14px 14px">Katz's, Ellen's Stardust Diner (walk-in line), Joe's Pizza, Gray's Papaya, Ess-a-Bagel, Insomnia Cookies, The Best Sichuan, and all the free sights.</div></div>`;}
+function renderInfo(){const r=(a,b)=>`<li style="grid-template-columns:1fr;padding:10px 14px"><div class="what">${a}</div><div class="note">${b}</div></li>`;
+  return `<div class="card"><div class="sec">Flights · American · Premium Economy</div><ul class="items">${r("AA 274 · LAX → JFK · Sun Nov 8","Departs 12:36 PM PT · lands 9:00 PM ET")}${r("AA 302 · JFK → LAX · Fri Nov 13","Departs 5:39 PM ET from Terminal 8 · lands 9:04 PM PT")}${r("Confirmation","WBJDHW")}</ul></div>
+  <div class="card"><div class="sec">Hotel</div><ul class="items">${r("Courtyard by Marriott Manhattan / Fifth Avenue","3 E 40th St at 5th Ave · check-out 11 AM Fri")}${r("Phone","<a href='tel:+12124471500' style='color:var(--travel)'>212-447-1500</a> (212-447-1500)")}${r("Nearest Starbucks","485 5th Ave at 41st St, one block north, opens 5 AM")}</ul></div>
+  <div class="card"><div class="sec">Ticket costs, rough per person</div><ul class="items">${r("Empire State Building","≈ $44–60, or ≈ $79–96 with the 102nd floor")}${r("Museum of Broadway","≈ $41–48")}${r("9/11 Museum","≈ $33–36")}${r("Total","About $120–180 · everything else is free")}</ul></div>
+  <div class="card"><div class="sec">Getting around</div><ul class="items">${r("JFK taxi","$70 flat to Manhattan, about $95 with tolls and tip · official stand only")}${r("Every ride and walk","Includes a 15-minute buffer")}${r("Dress warm","Stage doors and evening stops are outdoors in November")}</ul></div>
+  <div class="foot"><span>Build ${NYC_BUILD}</span><button class="btn red" id="resetAll">Reset everything</button></div>`;}
+function confirmBox(text,cb){const m=document.getElementById("modal");document.getElementById("mtext").textContent=text;m.classList.remove("hide");document.getElementById("myes").onclick=()=>{m.classList.add("hide");cb();};document.getElementById("mno").onclick=()=>m.classList.add("hide");}
+function render(){chips();document.getElementById("chips").classList.toggle("hide",view!=="day");
+  ["day","todo","info"].forEach(v=>document.getElementById("tab-"+v).classList.toggle("on",view===v));
+  document.getElementById("hideDone").checked=S.hideDone;
+  const m=document.getElementById("main");m.innerHTML=view==="day"?renderDay():view==="todo"?renderTodo():renderInfo();
+  m.querySelectorAll("[data-key]").forEach(b=>b.onclick=()=>{const k=b.dataset.key;S.done[k]=!S.done[k];save();render();});
+  m.querySelectorAll("[data-todo]").forEach(b=>b.onclick=()=>{const k=b.dataset.todo;S.todo[k]=!S.todo[k];save();render();});
+  const rd=document.getElementById("resetDay");if(rd)rd.onclick=()=>confirmBox("Uncheck everything for this day?",()=>{const d=DATA.days.find(x=>x.id===cur);d.items.forEach((_,i)=>delete S.done[key(d,i)]);save();render();});
+  const ra=document.getElementById("resetAll");if(ra)ra.onclick=()=>confirmBox("Uncheck every item on every day and the to-book list?",()=>{S.done={};S.todo={};DATA.todo.forEach(t=>S.todo[t.key]=t.done);save();render();});}
+document.getElementById("tab-day").onclick=()=>{view="day";render();window.scrollTo(0,0);};
+document.getElementById("tab-todo").onclick=()=>{view="todo";render();window.scrollTo(0,0);};
+document.getElementById("tab-info").onclick=()=>{view="info";render();window.scrollTo(0,0);};
+document.getElementById("hideDone").onchange=e=>{S.hideDone=e.target.checked;save();render();};
+render();
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
